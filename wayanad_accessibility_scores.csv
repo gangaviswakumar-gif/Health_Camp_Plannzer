@@ -1,0 +1,49 @@
+village,population,nearest_facility,nearest_facility_type,nearest_road_distance_km,nearest_road_duration_min,accessibility_need_score,accessibility_priority
+Vellarimala,7548,THQH Vythiri,THQH,31.00,50.2,100.0,High access need
+Kottappadi (Part),23384,FHC Vazhavatta,FHC,10.56,13.7,33.2,Low access need
+Kidanganad,9122,THQH Sulthan Bathery,THQH,10.49,11.3,32.9,Low access need
+Noolpuzha,14133,FHC Cheeral,FHC,9.87,15.3,30.9,Low access need
+Thirunelly,12878,FHC Appapara,FHC,8.94,15.2,27.9,Low access need
+Mananthavady,34663,CHC Peria,CHC,8.85,12.9,27.6,Low access need
+Sulthanbathery,23333,THQH Sulthan Bathery,THQH,8.07,8.7,25.0,Low access need
+Ambalavayal,16988,PHC Chulliyode,FHC,7.41,9.0,22.9,Low access need
+Muppainad,22892,FHC Mooppainad,FHC,6.57,11.0,20.1,Low access need
+Irulam,21052,CHC Pulpally,CHC,6.50,7.8,19.9,Low access need
+Anchukunnu,19078,CHC Panamaram,CHC,5.94,6.1,18.1,Low access need
+Thrikkaipatta (Part),8551,FHC Vazhavatta,FHC,5.93,8.3,18.0,Low access need
+Periya,11174,CHC Peria,CHC,5.62,6.3,17.0,Low access need
+Thariyode,1653,PHC Kappukunnu,FHC,5.29,12.6,15.9,Low access need
+Chundale,7996,THQH Vythiri,THQH,5.09,5.6,15.3,Low access need
+Vellamunda,18069,FHC Vellamunda,FHC,4.71,6.0,14.0,Low access need
+Kavumannam,10106,FHC Vengapally,FHC,4.66,8.6,13.9,Low access need
+Kaniambetta,29363,PHC Varadoor,FHC,4.46,5.5,13.2,Low access need
+Nenmeni,31225,PHC Chulliyode,FHC,4.36,6.0,12.9,Low access need
+Vengappally,11692,FHC Pozhuthana,FHC,4.29,4.8,12.7,Low access need
+Thondernad,11752,FHC Thondernad,FHC,4.17,9.3,12.3,Low access need
+Cherukottur,11462,CHC Panamaram,CHC,4.03,4.5,11.8,Low access need
+Nadavayal ,15795,FHC Poothady,FHC,3.91,4.5,11.4,Low access need
+Krishnagiri,12952,CHC Meeangady,CHC,3.57,3.8,10.3,Low access need
+Achooranam,11998,FHC Pozhuthana,FHC,3.43,5.6,9.8,Low access need
+Kanjirangad,11811,FHC Thondernad,FHC,3.34,3.5,9.5,Low access need
+Thrissilery,16818,FHC Begur,FHC,3.34,6.8,9.5,Low access need
+Muttil North ,12382,GH Kalpetta,GH,3.25,3.2,9.3,Low access need
+Porunnanore,22137,CHC Porunannure,CHC,3.14,3.1,8.9,Low access need
+Kuppadi,26662,THQH Sulthan Bathery,THQH,3.07,3.3,8.7,Low access need
+Pulpalli,28322,PHC Kurukkanmoola,FHC,3.03,4.5,8.5,Low access need
+Cheeral,15725,FHC Cheeral,FHC,2.81,4.2,7.8,Low access need
+Payyampally,13311,PHC Kurukkanmoola,FHC,2.81,5.6,7.8,Low access need
+Poothadi,14578,PHC Varadoor,FHC,2.73,5.6,7.6,Low access need
+Muttil South,22355,GH Kalpetta,GH,2.65,2.4,7.3,Low access need
+Padinharethara,16146,PHC Kappukunnu,FHC,2.54,7.0,6.9,Low access need
+Nalloornad,16928,CHC Porunannure,CHC,2.49,2.6,6.8,Low access need
+Kottathara ,17295,FHC Vengapally,FHC,2.44,2.9,6.6,Low access need
+Purakkadi ,21022,CHC Meeangady,CHC,2.05,5.3,5.3,Low access need
+Thomattuchal,17984,FHC Mooppainad,FHC,1.94,2.2,5.0,Low access need
+Edavaka,16737,FHC Edavaka,FHC,1.85,2.3,4.7,Low access need
+Valat,10799,PHC Valad,FHC,1.49,1.4,3.5,Low access need
+Kuppadithara,9761,FHC Padinjarathara,FHC,1.40,1.7,3.2,Low access need
+Kunnathidavaka,10309,THQH Vythiri,THQH,1.29,1.9,2.8,Low access need
+Thavinhal,17840,CHC Peria,CHC,1.03,2.5,2.0,Low access need
+Padichira,28970,PHC Mullankolly,FHC,0.83,0.9,1.3,Low access need
+Panamaram,12683,CHC Panamaram,CHC,0.42,1.0,0.0,Low access need
+Pozhuthana,6406,FHC Pozhuthana,FHC,0.43,0.6,0.0,Low access need

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SehatRoute — Wayanad Outreach Planner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+:root {
+  --bg:#f4f7f5; --card:#ffffff; --text:#17332a; --muted:#6b7b74;
+  --line:#e2e9e5; --green:#167a55; --green2:#0f6245;
+  --high:#b42318; --moderate:#b54708; --low:#157347;
+  --shadow:0 8px 28px rgba(21,55,43,.07);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--text)}
+header{background:#103d2d;color:white;padding:20px 28px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.brand{display:flex;align-items:center;gap:13px}
+.logo{width:42px;height:42px;border-radius:12px;background:#d8f0e4;color:#126044;display:grid;place-items:center;font-weight:800;font-size:19px}
+h1{margin:0;font-size:20px} .subtitle{font-size:12px;opacity:.72;margin-top:3px}
+.header-tag{font-size:12px;background:rgba(255,255,255,.1);padding:9px 12px;border-radius:999px}
+main{max-width:1450px;margin:auto;padding:24px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}
+.kpi{padding:18px} .kpi-label{font-size:12px;color:var(--muted);font-weight:600} .kpi-value{font-size:28px;font-weight:800;margin-top:8px} .kpi-note{font-size:11px;color:var(--muted);margin-top:5px}
+.layout{display:grid;grid-template-columns:1.55fr .9fr;gap:18px}
+.panel{padding:18px}
+.panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:10px}
+.panel-title{font-size:15px;font-weight:800} .panel-note{font-size:11px;color:var(--muted)}
+.controls{display:flex;gap:8px;flex-wrap:wrap}
+input,select{border:1px solid var(--line);border-radius:9px;padding:9px 11px;background:white;color:var(--text);font:inherit;font-size:12px}
+#map{height:510px;border-radius:12px;overflow:hidden}
+.table-wrap{max-height:510px;overflow:auto;border:1px solid var(--line);border-radius:12px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{position:sticky;top:0;background:#f7faf8;text-align:left;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.04em}
+th,td{padding:11px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+tbody tr{cursor:pointer} tbody tr:hover{background:#f5faf7}
+.badge{display:inline-block;border-radius:999px;padding:5px 8px;font-size:10px;font-weight:700}
+.high{background:#fde8e7;color:var(--high)} .moderate{background:#fff0dc;color:var(--moderate)} .low{background:#e5f5ed;color:var(--low)}
+.score{font-weight:800}
+.detail{margin-top:18px}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.detail-box{background:#f7faf8;border:1px solid var(--line);border-radius:12px;padding:12px}
+.detail-box small{color:var(--muted);display:block;font-size:10px;margin-bottom:5px}
+.detail-box strong{font-size:15px}
+.bar-row{margin:13px 0} .bar-label{display:flex;justify-content:space-between;font-size:11px;margin-bottom:5px}
+.bar{height:8px;background:#e7eee9;border-radius:99px;overflow:hidden} .fill{height:100%;background:var(--green);border-radius:99px}
+.explain{font-size:11px;line-height:1.6;color:#50635b;background:#f7faf8;border:1px solid var(--line);padding:12px;border-radius:12px;margin-top:12px}
+.footer-note{font-size:10px;color:var(--muted);margin-top:15px;line-height:1.5}
+@media(max-width:1050px){.layout{grid-template-columns:1fr}#map{height:420px}}
+@media(max-width:700px){main{padding:14px}header{padding:15px}.kpis{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <div class="logo">SR</div>
+    <div><h1>SehatRoute</h1><div class="subtitle">Wayanad Last-Mile Healthcare Outreach Planner</div></div>
+  </div>
+  <div class="header-tag">Decision support • Wayanad pilot</div>
+</header>
+
+<main>
+  <section class="kpis">
+    <div class="card kpi"><div class="kpi-label">VILLAGES ANALYSED</div><div class="kpi-value" id="kVillages">48</div><div class="kpi-note">Village-level records</div></div>
+    <div class="card kpi"><div class="kpi-label">HIGH PRIORITY</div><div class="kpi-value" id="kHigh">—</div><div class="kpi-note">Current composite score ≥ 70</div></div>
+    <div class="card kpi"><div class="kpi-label">HIGHEST PRIORITY</div><div class="kTop">—</div><div class="kpi-value" id="kTop">—</div><div class="kpi-note" id="kTopNote">—</div></div>
+    <div class="card kpi"><div class="kpi-label">LONGEST ACCESS ROUTE</div><div class="kpi-value" id="kRoad">—</div><div class="kpi-note" id="kRoadNote">—</div></div>
+  </section>
+
+  <section class="layout">
+    <div>
+      <div class="card panel">
+        <div class="panel-head">
+          <div><div class="panel-title">Priority map</div><div class="panel-note">Click a village marker to inspect its factors</div></div>
+          <div class="controls">
+            <select id="filter">
+              <option value="All">All priorities</option><option value="High">High</option>
+              <option value="Moderate">Moderate</option><option value="Low">Low</option>
+            </select>
+          </div>
+        </div>
+        <div id="map"></div>
+      </div>
+
+      <div class="card panel" style="margin-top:18px">
+        <div class="panel-head">
+          <div><div class="panel-title">Village priority ranking</div><div class="panel-note">Sorted by current composite score</div></div>
+          <input id="search" placeholder="Search village...">
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Rank</th><th>Village</th><th>Priority</th><th>Score</th><th>Access</th><th>Environment</th><th>Demographic</th></tr></thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <aside>
+      <div class="card panel">
+        <div class="panel-head">
+          <div><div class="panel-title">Village details</div><div class="panel-note">Select a village from the map or table</div></div>
+        </div>
+        <div id="detail"></div>
+      </div>
+      <div class="card panel" style="margin-top:18px">
+        <div class="panel-title">How the current score works</div>
+        <div class="explain">
+          <b>Current prototype score</b><br>
+          Accessibility need <b>50%</b> + Environmental risk <b>25%</b> + Demographic vulnerability <b>25%</b>.
+          Each component is represented on a 0–100 scale.
+        </div>
+        <div class="explain">
+          <b>Demographic vulnerability</b><br>
+          Combines child share (0–6) and estimated elderly share (60+) equally.
+          The elderly value is a temporary estimate using <b>9.55%</b> of village population, not an actual village-level count.
+        </div>
+        <div class="explain">
+          <b>Important data status</b><br>
+          The current UI does <b>not</b> use the simulated unresolved-case file in the official score. It can be added later when a genuine health-record/outreach dataset is available.
+        </div>
+      </div>
+    </aside>
+  </section>
+  <div class="footer-note">
+    Prototype for decision support. It does not replace health-administrator judgement. Accessibility values use the collected road-distance/duration data; environmental values use the collected flood/landslide risk data; child data comes from Census 2011, while elderly values are explicitly estimated.
+  </div>
+</main>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const DATA = [{"village": "Vellarimala", "population": 7548, "lat": 11.451361, "lng": 76.1433419, "rank": 1, "priority": "High", "score": 72.0, "accessibility": 100.0, "road_km": 31.0, "duration_min": 50.2, "nearest_facility": "THQH Vythiri", "facility_type": "THQH", "environment": 30.0, "environment_band": "Low environmental risk", "child_pct": 12.15, "elderly_pct": 9.55, "demographic": 58.022774327122164, "elderly_estimated": 721}, {"village": "Thirunelly", "population": 12878, "lat": 11.9098981, "lng": 75.994875, "rank": 2, "priority": "Moderate", "score": 46.3, "accessibility": 27.9, "road_km": 8.94, "duration_min": 15.2, "nearest_facility": "FHC Appapara", "facility_type": "FHC", "environment": 62.5, "environment_band": "Moderate environmental risk", "child_pct": 13.01, "elderly_pct": 9.55, "demographic": 66.92546583850933, "elderly_estimated": 1230}, {"village": "Noolpuzha", "population": 14133, "lat": 11.6079535, "lng": 76.3700688, "rank": 3, "priority": "Moderate", "score": 43.9, "accessibility": 30.9, "road_km": 9.87, "duration_min": 15.3, "nearest_facility": "FHC Cheeral", "facility_type": "FHC", "environment": 62.5, "environment_band": "Moderate environmental risk", "child_pct": 11.5, "elderly_pct": 9.55, "demographic": 51.29399585921325, "elderly_estimated": 1350}, {"village": "Achooranam", "population": 11998, "lat": 11.6077331, "lng": 76.0081286, "rank": 4, "priority": "Low", "score": 39.3, "accessibility": 9.8, "road_km": 3.43, "duration_min": 5.6, "nearest_facility": "FHC Pozhuthana", "facility_type": "FHC", "environment": 62.5, "environment_band": "Moderate environmental risk", "child_pct": 13.79, "elderly_pct": 9.55, "demographic": 75.0, "elderly_estimated": 1146}, {"village": "Thondernad", "population": 11752, "lat": 11.759468, "lng": 75.8633721, "rank": 4, "priority": "Low", "score": 39.3, "accessibility": 12.3, "road_km": 4.17, "duration_min": 9.3, "nearest_facility": "FHC Thondernad", "facility_type": "FHC", "environment": 62.5, "environment_band": "Moderate environmental risk", "child_pct": 13.33, "elderly_pct": 9.55, "demographic": 70.23809523809524, "elderly_estimated": 1122}, {"village": "Kidanganad", "population": 9122, "lat": 11.7323529, "lng": 76.2451929, "rank": 6, "priority": "Low", "score": 37.5, "accessibility": 32.9, "road_km": 10.49, "duration_min": 11.3, "nearest_facility": "THQH Sulthan Bathery", "facility_type": "THQH", "environment": 30.0, "environment_band": "Low environmental risk", "child_pct": 11.8, "elderly_pct": 9.55, "demographic": 54.39958592132506, "elderly_estimated": 871}, {"village": "Kaniambetta", "population": 29363, "lat": 11.6953621, "lng": 76.0807517, "rank": 7, "priority": "Low", "score": 36.4, "accessibility": 13.2, "road_km": 4.46, "duration_min": 5.5, "nearest_facility": "PHC Varadoor", "facility_type": "FHC", "environment": 62.5, "environment_band": "Moderate environmental risk", "child_pct": 12.01, "elderly_pct": 9.55, "demographic": 56.57349896480331, "elderly_estimated": 2804}, {"village": "Muttil North", "population": 12382, "lat": 11.642924, "lng": 76.1102213, "rank": 8, "priority": "Low", "score": 35.5, "accessibility": 9.3, "road_km": 3.25, "duration_min": 3.2, "nearest_facility": "GH Kalpetta", "facility_type": "GH", "environment": 62.5, "environment_band": "Moderate environmental risk", "child_pct": 12.42, "elderly_pct": 9.55, "demographic": 60.81780538302278, "elderly_estimated": 1182}, {"village": "Kottappadi (Part)", "population": 23384, "lat": 11.5540845, "lng": 76.1385942, "rank": 9, "priority": "Low", "score": 35.0, "accessibility": 33.2, "road_km": 10.56, "duration_min": 13.7, "nearest_facility": "FHC Vazhavatta", "facility_type": "FHC", "environment": 12.5, "environment_band": "Low environmental risk", "child_pct": 12.44, "elderly_pct": 9.55, "demographic": 61.024844720496894, "elderly_estimated": 2233}, {"village": "Cherukottur", "population": 11462, "lat": 11.7685286, "lng": 76.0611498, "rank": 10, "priority": "Low", "score": 34.2, "accessibility": 11.8, "road_km": 4.03, "duration_min": 4.5, "nearest_facility": "CHC Panamaram", "facility_type": "CHC", "environment": 62.5, "environment_band": "Moderate environmental risk", "child_pct": 11.46, "elderly_pct": 9.55, "demographic": 50.879917184265025, "elderly_estimated": 1095}, {"village": "Padinharethara", "population": 16146, "lat": 11.6686805, "lng": 75.9615174, "rank": 11, "priority": "Low", "score": 33.9, "accessibility": 6.9, "road_km": 2.54, "duration_min": 7.0, "nearest_facility": "PHC Kappukunnu", "facility_type": "FHC", "environment": 62.5, "environment_band": "Moderate environmental risk", "child_pct": 12.28, "elderly_pct": 9.55, "demographic": 59.36853002070393, "elderly_estimated": 1542}, {"village": "Valat", "population": 10799, "lat": 11.7942292, "lng": 75.9166266, "rank": 12, "priority": "Low", "score": 33.8, "accessibility": 3.5, "road_km": 1.49, "duration_min": 1.4, "nearest_facility": "PHC Valad", "facility_type": "FHC", "environment": 80.0, "environment_band": "High environmental risk", "child_pct": 11.22, "elderly_pct": 9.55, "demographic": 48.39544513457558, "elderly_estimated": 1031}, {"village": "Kuppadithara", "population": 9761, "lat": 11.6928714, "lng": 76.0055511, "rank": 13, "priority": "Low", "score": 33.4, "accessibility": 3.2, "road_km": 1.4, "duration_min": 1.7, "nearest_facility": "FHC Padinjarathara", "facility_type": "FHC", "environment": 62.5, "environment_band": "Moderate environmental risk", "child_pct": 12.81, "elderly_pct": 9.55, "demographic": 64.85507246376812, "elderly_estimated": 932}, {"village": "Kavumannam", "population": 10106, "lat": 11.634977, "lng": 76.011751, "rank": 14, "priority": "Low", "score": 33.2, "accessibility": 13.9, "road_km": 4.66, "duration_min": 8.6, "nearest_facility": "FHC Vengapally", "facility_type": "FHC", "environment": 62.5, "environment_band": "Moderate environmental risk", "child_pct": 10.64, "elderly_pct": 9.55, "demographic": 42.39130434782609, "elderly_estimated": 965}, {"village": "Periya", "population": 11174, "lat": 11.8334589, "lng": 75.8550205, "rank": 14, "priority": "Low", "score": 33.2, "accessibility": 17.0, "road_km": 5.62, "duration_min": 6.3, "nearest_facility": "CHC Peria", "facility_type": "CHC", "environment": 62.5, "environment_band": "Moderate environmental risk", "child_pct": 10.07, "elderly_pct": 9.55, "demographic": 36.49068322981366, "elderly_estimated": 1067}, {"village": "Nenmeni", "population": 31225, "lat": 11.6128349, "lng": 76.2757054, "rank": 16, "priority": "Low", "score": 32.9, "accessibility": 12.9, "road_km": 4.36, "duration_min": 6.0, "nearest_facility": "PHC Chulliyode", "facility_type": "FHC", "environment": 62.5, "environment_band": "Moderate environmental risk", "child_pct": 10.73, "elderly_pct": 9.55, "demographic": 43.32298136645963, "elderly_estimated": 2982}, {"village": "Sulthanbathery", "population": 23333, "lat": 11.7115118, "lng": 76.2527549, "rank": 17, "priority": "Low", "score": 32.5, "accessibility": 25.0, "road_km": 8.07, "duration_min": 8.7, "nearest_facility": "THQH Sulthan Bathery", "facility_type": "THQH", "environment": 30.0, "environment_band": "Low environmental risk", "child_pct": 11.37, "elderly_pct": 9.55, "demographic": 49.94824016563146, "elderly_estimated": 2228}, {"village": "Nadavayal", "population": 15795, "lat": 11.7410548, "lng": 76.1191325, "rank": 18, "priority": "Low", "score": 31.9, "accessibility": 11.4, "road_km": 3.91, "duration_min": 4.5, "nearest_facility": "FHC Poothady", "facility_type": "FHC", "environment": 62.5, "environment_band": "Moderate environmental risk", "child_pct": 10.65, "elderly_pct": 9.55, "demographic": 42.49482401656315, "elderly_estimated": 1508}, {"village": "Kottathara", "population": 17295, "lat": 11.6650598, "lng": 76.0416419, "rank": 19, "priority": "Low", "score": 31.7, "accessibility": 6.6, "road_km": 2.44, "duration_min": 2.9, "nearest_facility": "FHC Vengapally", "facility_type": "FHC", "environment": 62.5, "environment_band": "Moderate environmental risk", "child_pct": 11.48, "elderly_pct": 9.55, "demographic": 51.08695652173914, "elderly_estimated": 1652}, {"village": "Nalloornad", "population": 16928, "lat": 11.7597339, "lng": 76.0104461, "rank": 20, "priority": "Low", "score": 31.0, "accessibility": 6.8, "road_km": 2.49, "duration_min": 2.6, "nearest_facility": "CHC Porunannure", "facility_type": "CHC", "environment": 62.5, "environment_band": "Moderate environmental risk", "child_pct": 11.17, "elderly_pct": 9.55, "demographic": 47.877846790890274, "elderly_estimated": 1617}, {"village": "Kunnathidavaka", "population": 10309, "lat": 11.556, "lng": 76.037, "rank": 21, "priority": "Low", "score": 30.6, "accessibility": 2.8, "road_km": 1.29, "duration_min": 1.9, "nearest_facility": "THQH Vythiri", "facility_type": "THQH", "environment": 62.5, "environment_band": "Moderate environmental risk", "child_pct": 11.8, "elderly_pct": 9.55, "demographic": 54.39958592132506, "elderly_estimated": 985}, {"village": "Pozhuthana", "population": 6406, "lat": 11.5876934, "lng": 76.0185741, "rank": 22, "priority": "Low", "score": 30.1, "accessibility": 0.0, "road_km": 0.43, "duration_min": 0.6, "nearest_facility": "FHC Pozhuthana", "facility_type": "FHC", "environment": 62.5, "environment_band": "Moderate environmental risk", "child_pct": 12.14, "elderly_pct": 9.55, "demographic": 57.9192546583851, "elderly_estimated": 612}, {"village": "Panamaram", "population": 12683, "lat": 11.7390969, "lng": 76.0731104, "rank": 23, "priority": "Low", "score": 29.5, "accessibility": 0.0, "road_km": 0.42, "duration_min": 1.0, "nearest_facility": "CHC Panamaram", "facility_type": "CHC", "environment": 62.5, "environment_band": "Moderate environmental risk", "child_pct": 11.92, "elderly_pct": 9.55, "demographic": 55.64182194616977, "elderly_estimated": 1211}, {"village": "Mananthavady", "population": 34663, "lat": 11.8298756, "lng": 75.9418934, "rank": 24, "priority": "Low", "score": 28.7, "accessibility": 27.6, "road_km": 8.85, "duration_min": 12.9, "nearest_facility": "CHC Peria", "facility_type": "CHC", "environment": 12.5, "environment_band": "Low environmental risk", "child_pct": 11.11, "elderly_pct": 9.55, "demographic": 47.2567287784679, "elderly_estimated": 3310}, {"village": "Purakkadi", "population": 21022, "lat": 11.6759972, "lng": 76.1588544, "rank": 24, "priority": "Low", "score": 28.7, "accessibility": 5.3, "road_km": 2.05, "duration_min": 5.3, "nearest_facility": "CHC Meeangady", "facility_type": "CHC", "environment": 62.5, "environment_band": "Moderate environmental risk", "child_pct": 10.59, "elderly_pct": 9.55, "demographic": 41.873706004140786, "elderly_estimated": 2008}, {"village": "Krishnagiri", "population": 12952, "lat": 11.6646503, "lng": 76.1901007, "rank": 26, "priority": "Low", "score": 28.1, "accessibility": 10.3, "road_km": 3.57, "duration_min": 3.8, "nearest_facility": "CHC Meeangady", "facility_type": "CHC", "environment": 62.5, "environment_band": "Moderate environmental risk", "child_pct": 9.36, "elderly_pct": 9.55, "demographic": 29.140786749482388, "elderly_estimated": 1237}, {"village": "Payyampally", "population": 13311, "lat": 11.8081053, "lng": 76.0708658, "rank": 27, "priority": "Low", "score": 28.0, "accessibility": 7.8, "road_km": 2.81, "duration_min": 5.6, "nearest_facility": "PHC Kurukkanmoola", "facility_type": "FHC", "environment": 62.5, "environment_band": "Moderate environmental risk", "child_pct": 9.81, "elderly_pct": 9.55, "demographic": 33.799171842650104, "elderly_estimated": 1271}, {"village": "Vellamunda", "population": 18069, "lat": 11.7245202, "lng": 75.965335, "rank": 28, "priority": "Low", "score": 27.3, "accessibility": 14.0, "road_km": 4.71, "duration_min": 6.0, "nearest_facility": "FHC Vellamunda", "facility_type": "FHC", "environment": 12.5, "environment_band": "Low environmental risk", "child_pct": 13.2, "elderly_pct": 9.55, "demographic": 68.89233954451346, "elderly_estimated": 1726}, {"village": "Ambalavayal", "population": 16988, "lat": 11.6192026, "lng": 76.2120176, "rank": 29, "priority": "Low", "score": 26.4, "accessibility": 22.9, "road_km": 7.41, "duration_min": 9.0, "nearest_facility": "PHC Chulliyode", "facility_type": "FHC", "environment": 12.5, "environment_band": "Low environmental risk", "child_pct": 11.13, "elderly_pct": 9.55, "demographic": 47.46376811594204, "elderly_estimated": 1622}, {"village": "Muppainad", "population": 22892, "lat": 11.5420978, "lng": 76.1778115, "rank": 30, "priority": "Low", "score": 26.2, "accessibility": 20.1, "road_km": 6.57, "duration_min": 11.0, "nearest_facility": "FHC Mooppainad", "facility_type": "FHC", "environment": 12.5, "environment_band": "Low environmental risk", "child_pct": 11.58, "elderly_pct": 9.55, "demographic": 52.12215320910973, "elderly_estimated": 2186}, {"village": "Thariyode", "population": 1653, "lat": 11.6444921, "lng": 75.9509812, "rank": 30, "priority": "Low", "score": 26.2, "accessibility": 15.9, "road_km": 5.29, "duration_min": 12.6, "nearest_facility": "PHC Kappukunnu", "facility_type": "FHC", "environment": 12.5, "environment_band": "Low environmental risk", "child_pct": 12.4, "elderly_pct": 9.55, "demographic": 60.610766045548665, "elderly_estimated": 158}, {"village": "Poothadi", "population": 14578, "lat": 11.7100804, "lng": 76.1216671, "rank": 32, "priority": "Low", "score": 25.7, "accessibility": 7.6, "road_km": 2.73, "duration_min": 5.6, "nearest_facility": "PHC Varadoor", "facility_type": "FHC", "environment": 62.5, "environment_band": "Moderate environmental risk", "child_pct": 8.96, "elderly_pct": 9.55, "demographic": 25.0, "elderly_estimated": 1392}, {"village": "Porunnanore", "population": 22137, "lat": 11.7511393, "lng": 76.0048125, "rank": 33, "priority": "Low", "score": 25.6, "accessibility": 8.9, "road_km": 3.14, "duration_min": 3.1, "nearest_facility": "CHC Porunannure", "facility_type": "CHC", "environment": 12.5, "environment_band": "Low environmental risk", "child_pct": 13.52, "elderly_pct": 9.55, "demographic": 72.20496894409939, "elderly_estimated": 2114}, {"village": "Anchukunnu", "population": 19078, "lat": 11.7526104, "lng": 76.0372835, "rank": 34, "priority": "Low", "score": 24.3, "accessibility": 18.1, "road_km": 5.94, "duration_min": 6.1, "nearest_facility": "CHC Panamaram", "facility_type": "CHC", "environment": 12.5, "environment_band": "Low environmental risk", "child_pct": 11.22, "elderly_pct": 9.55, "demographic": 48.39544513457558, "elderly_estimated": 1822}, {"village": "Muttil South", "population": 22355, "lat": 11.6410934, "lng": 76.1073898, "rank": 35, "priority": "Low", "score": 23.8, "accessibility": 7.3, "road_km": 2.65, "duration_min": 2.4, "nearest_facility": "GH Kalpetta", "facility_type": "GH", "environment": 30.0, "environment_band": "Low environmental risk", "child_pct": 11.45, "elderly_pct": 9.55, "demographic": 50.77639751552795, "elderly_estimated": 2135}, {"village": "Thrissilery", "population": 16818, "lat": 11.8561401, "lng": 76.0439966, "rank": 36, "priority": "Low", "score": 23.7, "accessibility": 9.5, "road_km": 3.34, "duration_min": 6.8, "nearest_facility": "FHC Begur", "facility_type": "FHC", "environment": 30.0, "environment_band": "Low environmental risk", "child_pct": 10.98, "elderly_pct": 9.55, "demographic": 45.91097308488613, "elderly_estimated": 1606}, {"village": "Chundale", "population": 7996, "lat": 11.5740364, "lng": 76.0591416, "rank": 37, "priority": "Low", "score": 22.3, "accessibility": 15.3, "road_km": 5.09, "duration_min": 5.6, "nearest_facility": "THQH Vythiri", "facility_type": "THQH", "environment": 12.5, "environment_band": "Low environmental risk", "child_pct": 10.98, "elderly_pct": 9.55, "demographic": 45.91097308488613, "elderly_estimated": 764}, {"village": "Vengappally", "population": 11692, "lat": 11.6107661, "lng": 76.04583, "rank": 37, "priority": "Low", "score": 22.3, "accessibility": 12.7, "road_km": 4.29, "duration_min": 4.8, "nearest_facility": "FHC Pozhuthana", "facility_type": "FHC", "environment": 12.5, "environment_band": "Low environmental risk", "child_pct": 11.5, "elderly_pct": 9.55, "demographic": 51.29399585921325, "elderly_estimated": 1117}, {"village": "Thrikkaipatta (Part)", "population": 8551, "lat": 11.5982329, "lng": 76.1320144, "rank": 39, "priority": "Low", "score": 22.1, "accessibility": 18.0, "road_km": 5.93, "duration_min": 8.3, "nearest_facility": "FHC Vazhavatta", "facility_type": "FHC", "environment": 12.5, "environment_band": "Low environmental risk", "child_pct": 10.4, "elderly_pct": 9.55, "demographic": 39.90683229813665, "elderly_estimated": 817}, {"village": "Irulam", "population": 21052, "lat": 11.7615571, "lng": 76.2038087, "rank": 40, "priority": "Low", "score": 21.9, "accessibility": 19.9, "road_km": 6.5, "duration_min": 7.8, "nearest_facility": "CHC Pulpally", "facility_type": "CHC", "environment": 12.5, "environment_band": "Low environmental risk", "child_pct": 9.97, "elderly_pct": 9.55, "demographic": 35.45548654244307, "elderly_estimated": 2010}, {"village": "Kanjirangad", "population": 11811, "lat": 11.7401337, "lng": 75.9093779, "rank": 41, "priority": "Low", "score": 20.4, "accessibility": 9.5, "road_km": 3.34, "duration_min": 3.5, "nearest_facility": "FHC Thondernad", "facility_type": "FHC", "environment": 12.5, "environment_band": "Low environmental risk", "child_pct": 11.38, "elderly_pct": 9.55, "demographic": 50.05175983436854, "elderly_estimated": 1128}, {"village": "Edavaka", "population": 16737, "lat": 11.7740941, "lng": 75.9878815, "rank": 42, "priority": "Low", "score": 18.8, "accessibility": 4.7, "road_km": 1.85, "duration_min": 2.3, "nearest_facility": "FHC Edavaka", "facility_type": "FHC", "environment": 12.5, "environment_band": "Low environmental risk", "child_pct": 11.71, "elderly_pct": 9.55, "demographic": 53.46790890269152, "elderly_estimated": 1598}, {"village": "Kuppadi", "population": 26662, "lat": 11.6831792, "lng": 76.2691722, "rank": 43, "priority": "Low", "score": 18.7, "accessibility": 8.7, "road_km": 3.07, "duration_min": 3.3, "nearest_facility": "THQH Sulthan Bathery", "facility_type": "THQH", "environment": 12.5, "environment_band": "Low environmental risk", "child_pct": 10.89, "elderly_pct": 9.55, "demographic": 44.97929606625259, "elderly_estimated": 2546}, {"village": "Pulpalli", "population": 28322, "lat": 11.8092696, "lng": 76.050483, "rank": 44, "priority": "Low", "score": 18.4, "accessibility": 8.5, "road_km": 3.03, "duration_min": 4.5, "nearest_facility": "PHC Kurukkanmoola", "facility_type": "FHC", "environment": 12.5, "environment_band": "Low environmental risk", "child_pct": 10.79, "elderly_pct": 9.55, "demographic": 43.94409937888197, "elderly_estimated": 2705}, {"village": "Thavinhal", "population": 17840, "lat": 11.8369741, "lng": 75.8855607, "rank": 45, "priority": "Low", "score": 15.8, "accessibility": 2.0, "road_km": 1.03, "duration_min": 2.5, "nearest_facility": "CHC Peria", "facility_type": "CHC", "environment": 12.5, "environment_band": "Low environmental risk", "child_pct": 11.05, "elderly_pct": 9.55, "demographic": 46.63561076604556, "elderly_estimated": 1704}, {"village": "Cheeral", "population": 15725, "lat": 11.591576, "lng": 76.3041243, "rank": 46, "priority": "Low", "score": 15.7, "accessibility": 7.8, "road_km": 2.81, "duration_min": 4.2, "nearest_facility": "FHC Cheeral", "facility_type": "FHC", "environment": 12.5, "environment_band": "Low environmental risk", "child_pct": 9.88, "elderly_pct": 9.55, "demographic": 34.523809523809526, "elderly_estimated": 1502}, {"village": "Thomattuchal", "population": 17984, "lat": 11.5691045, "lng": 76.219912, "rank": 47, "priority": "Low", "score": 14.6, "accessibility": 5.0, "road_km": 1.94, "duration_min": 2.2, "nearest_facility": "FHC Mooppainad", "facility_type": "FHC", "environment": 12.5, "environment_band": "Low environmental risk", "child_pct": 10.01, "elderly_pct": 9.55, "demographic": 35.8695652173913, "elderly_estimated": 1717}, {"village": "Padichira", "population": 28970, "lat": 11.8396351, "lng": 76.1789133, "rank": 48, "priority": "Low", "score": 12.2, "accessibility": 1.3, "road_km": 0.83, "duration_min": 0.9, "nearest_facility": "PHC Mullankolly", "facility_type": "FHC", "environment": 12.5, "environment_band": "Low environmental risk", "child_pct": 9.8, "elderly_pct": 9.55, "demographic": 33.69565217391305, "elderly_estimated": 2767}];
+
+const map = L.map('map').setView([11.75, 76.05], 10);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution:'&copy; OpenStreetMap contributors'
+}).addTo(map);
+
+let markers = [];
+
+function markerColor(priority) {
+  if(priority === 'High') return '#b42318';
+  if(priority === 'Moderate') return '#b54708';
+  return '#157347';
+}
+
+function renderMarkers() {
+  markers.forEach(m => map.removeLayer(m));
+  markers = [];
+  const filter = document.getElementById('filter').value;
+  DATA.filter(d => filter === 'All' || d.priority === filter).forEach(d => {
+    const marker = L.circleMarker([d.lat,d.lng], {
+      radius: d.priority === 'High' ? 9 : 7,
+      color: markerColor(d.priority), fillColor: markerColor(d.priority),
+      fillOpacity:.78, weight:2
+    }).addTo(map);
+    marker.bindPopup(`<b>${d.village}</b><br>Priority: ${d.priority}<br>Score: ${d.score}`);
+    marker.on('click', () => showDetail(d));
+    markers.push(marker);
+  });
+}
+
+function badge(p) { return `<span class="badge ${p.toLowerCase()}">${p}</span>`; }
+
+function showDetail(d) {
+  document.getElementById('detail').innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <div><div style="font-size:21px;font-weight:800">${d.village}</div><div style="font-size:11px;color:var(--muted)">Rank #${d.rank}</div></div>
+      <div style="text-align:right">${badge(d.priority)}<div style="font-size:25px;font-weight:800;margin-top:5px">${d.score}</div></div>
+    </div>
+    <div class="detail-grid">
+      <div class="detail-box"><small>Population</small><strong>${d.population.toLocaleString()}</strong></div>
+      <div class="detail-box"><small>Nearest facility</small><strong>${d.nearest_facility}</strong></div>
+      <div class="detail-box"><small>Road distance</small><strong>${d.road_km.toFixed(2)} km</strong></div>
+      <div class="detail-box"><small>Estimated travel</small><strong>${d.duration_min.toFixed(1)} min</strong></div>
+    </div>
+
+    <div style="margin-top:18px;font-weight:800;font-size:13px">Priority factors</div>
+    <div class="bar-row"><div class="bar-label"><span>Healthcare accessibility need</span><b>${d.accessibility.toFixed(1)}</b></div><div class="bar"><div class="fill" style="width:${d.accessibility}%"></div></div></div>
+    <div class="bar-row"><div class="bar-label"><span>Environmental risk</span><b>${d.environment.toFixed(1)}</b></div><div class="bar"><div class="fill" style="width:${d.environment}%"></div></div></div>
+    <div class="bar-row"><div class="bar-label"><span>Demographic vulnerability</span><b>${d.demographic.toFixed(1)}</b></div><div class="bar"><div class="fill" style="width:${d.demographic}%"></div></div></div>
+
+    <div class="detail-grid" style="margin-top:12px">
+      <div class="detail-box"><small>Children 0–6</small><strong>${d.child_pct.toFixed(2)}%</strong></div>
+      <div class="detail-box"><small>60+ elderly</small><strong>${d.elderly_pct.toFixed(2)}%*</strong></div>
+    </div>
+    <div class="explain">
+      <b>Why this village ranks here:</b><br>
+      Its current score combines access difficulty, environmental exposure and demographic vulnerability.
+      Nearest facility: <b>${d.nearest_facility}</b>.
+    </div>
+    <div class="footer-note">* Elderly percentage is an estimate based on 9.55% of village population.</div>
+  `;
+}
+
+function renderTable() {
+  const q = document.getElementById('search').value.toLowerCase();
+  const filter = document.getElementById('filter').value;
+  const rows = DATA.filter(d => (filter==='All'||d.priority===filter) && d.village.toLowerCase().includes(q))
+    .sort((a,b)=>b.score-a.score)
+    .map(d => `<tr onclick='showDetail(DATA.find(x=>x.village===${JSON.stringify(d.village)}))'>
+      <td>#${d.rank}</td><td><b>${d.village}</b></td><td>${badge(d.priority)}</td>
+      <td class="score">${d.score.toFixed(1)}</td><td>${d.accessibility.toFixed(1)}</td>
+      <td>${d.environment.toFixed(1)}</td><td>${d.demographic.toFixed(1)}</td>
+    </tr>`).join('');
+  document.getElementById('rows').innerHTML = rows;
+}
+
+function init() {
+  const high = DATA.filter(d=>d.priority==='High').length;
+  const top = [...DATA].sort((a,b)=>b.score-a.score)[0];
+  const road = [...DATA].sort((a,b)=>b.road_km-a.road_km)[0];
+  document.getElementById('kHigh').textContent = high;
+  document.getElementById('kTop').textContent = top.village;
+  document.getElementById('kTopNote').textContent = `Score ${top.score.toFixed(1)} • Rank #1`;
+  document.getElementById('kRoad').textContent = `${road.road_km.toFixed(1)} km`;
+  document.getElementById('kRoadNote').textContent = `${road.village} → ${road.nearest_facility}`;
+  document.getElementById('filter').onchange=()=>{renderMarkers();renderTable()};
+  document.getElementById('search').oninput=renderTable;
+  renderMarkers(); renderTable(); showDetail(top);
+}
+init();
+</script>
+<script src="sehatroute-app.js"></script>
+</body>
+</html>

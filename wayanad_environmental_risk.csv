@@ -1,0 +1,49 @@
+village,landslide_susceptibility,landslide_risk_score,modelled_flood_exposure_25yr,flood_exposure_score,environmental_risk_score,environmental_risk_band,weighting
+Valat,Moderate,60,Yes,100,80.0,High environmental risk,50% landslide susceptibility + 50% modeled flood exposure
+Achooranam,Low,25,Yes,100,62.5,Moderate environmental risk,50% landslide susceptibility + 50% modeled flood exposure
+Cherukottur,Low,25,Yes,100,62.5,Moderate environmental risk,50% landslide susceptibility + 50% modeled flood exposure
+Kaniambetta,Low,25,Yes,100,62.5,Moderate environmental risk,50% landslide susceptibility + 50% modeled flood exposure
+Kavumannam,Low,25,Yes,100,62.5,Moderate environmental risk,50% landslide susceptibility + 50% modeled flood exposure
+Kottathara ,Low,25,Yes,100,62.5,Moderate environmental risk,50% landslide susceptibility + 50% modeled flood exposure
+Krishnagiri,Low,25,Yes,100,62.5,Moderate environmental risk,50% landslide susceptibility + 50% modeled flood exposure
+Kunnathidavaka,Low,25,Yes,100,62.5,Moderate environmental risk,50% landslide susceptibility + 50% modeled flood exposure
+Kuppadithara,Low,25,Yes,100,62.5,Moderate environmental risk,50% landslide susceptibility + 50% modeled flood exposure
+Muttil North ,Low,25,Yes,100,62.5,Moderate environmental risk,50% landslide susceptibility + 50% modeled flood exposure
+Nadavayal ,Low,25,Yes,100,62.5,Moderate environmental risk,50% landslide susceptibility + 50% modeled flood exposure
+Nalloornad,Low,25,Yes,100,62.5,Moderate environmental risk,50% landslide susceptibility + 50% modeled flood exposure
+Nenmeni,Low,25,Yes,100,62.5,Moderate environmental risk,50% landslide susceptibility + 50% modeled flood exposure
+Noolpuzha,Low,25,Yes,100,62.5,Moderate environmental risk,50% landslide susceptibility + 50% modeled flood exposure
+Padinharethara,Low,25,Yes,100,62.5,Moderate environmental risk,50% landslide susceptibility + 50% modeled flood exposure
+Panamaram,Low,25,Yes,100,62.5,Moderate environmental risk,50% landslide susceptibility + 50% modeled flood exposure
+Payyampally,Low,25,Yes,100,62.5,Moderate environmental risk,50% landslide susceptibility + 50% modeled flood exposure
+Periya,Low,25,Yes,100,62.5,Moderate environmental risk,50% landslide susceptibility + 50% modeled flood exposure
+Poothadi,Low,25,Yes,100,62.5,Moderate environmental risk,50% landslide susceptibility + 50% modeled flood exposure
+Pozhuthana,Low,25,Yes,100,62.5,Moderate environmental risk,50% landslide susceptibility + 50% modeled flood exposure
+Purakkadi ,Low,25,Yes,100,62.5,Moderate environmental risk,50% landslide susceptibility + 50% modeled flood exposure
+Thirunelly,Low,25,Yes,100,62.5,Moderate environmental risk,50% landslide susceptibility + 50% modeled flood exposure
+Thondernad,Low,25,Yes,100,62.5,Moderate environmental risk,50% landslide susceptibility + 50% modeled flood exposure
+Kidanganad,Moderate,60,No,0,30.0,Low environmental risk,50% landslide susceptibility + 50% modeled flood exposure
+Muttil South,Moderate,60,No,0,30.0,Low environmental risk,50% landslide susceptibility + 50% modeled flood exposure
+Sulthanbathery,Moderate,60,No,0,30.0,Low environmental risk,50% landslide susceptibility + 50% modeled flood exposure
+Thrissilery,Moderate,60,No,0,30.0,Low environmental risk,50% landslide susceptibility + 50% modeled flood exposure
+Vellarimala,Moderate,60,No,0,30.0,Low environmental risk,50% landslide susceptibility + 50% modeled flood exposure
+Ambalavayal,Low,25,No,0,12.5,Low environmental risk,50% landslide susceptibility + 50% modeled flood exposure
+Anchukunnu,Low,25,No,0,12.5,Low environmental risk,50% landslide susceptibility + 50% modeled flood exposure
+Cheeral,Low,25,No,0,12.5,Low environmental risk,50% landslide susceptibility + 50% modeled flood exposure
+Chundale,Low,25,No,0,12.5,Low environmental risk,50% landslide susceptibility + 50% modeled flood exposure
+Edavaka,Low,25,No,0,12.5,Low environmental risk,50% landslide susceptibility + 50% modeled flood exposure
+Irulam,Low,25,No,0,12.5,Low environmental risk,50% landslide susceptibility + 50% modeled flood exposure
+Kanjirangad,Low,25,No,0,12.5,Low environmental risk,50% landslide susceptibility + 50% modeled flood exposure
+Kottappadi (Part),Low,25,No,0,12.5,Low environmental risk,50% landslide susceptibility + 50% modeled flood exposure
+Kuppadi,Low,25,No,0,12.5,Low environmental risk,50% landslide susceptibility + 50% modeled flood exposure
+Mananthavady,Low,25,No,0,12.5,Low environmental risk,50% landslide susceptibility + 50% modeled flood exposure
+Muppainad,Low,25,No,0,12.5,Low environmental risk,50% landslide susceptibility + 50% modeled flood exposure
+Padichira,Low,25,No,0,12.5,Low environmental risk,50% landslide susceptibility + 50% modeled flood exposure
+Porunnanore,Low,25,No,0,12.5,Low environmental risk,50% landslide susceptibility + 50% modeled flood exposure
+Pulpalli,Low,25,No,0,12.5,Low environmental risk,50% landslide susceptibility + 50% modeled flood exposure
+Thariyode,Low,25,No,0,12.5,Low environmental risk,50% landslide susceptibility + 50% modeled flood exposure
+Thavinhal,Low,25,No,0,12.5,Low environmental risk,50% landslide susceptibility + 50% modeled flood exposure
+Thomattuchal,Low,25,No,0,12.5,Low environmental risk,50% landslide susceptibility + 50% modeled flood exposure
+Thrikkaipatta (Part),Low,25,No,0,12.5,Low environmental risk,50% landslide susceptibility + 50% modeled flood exposure
+Vellamunda,Low,25,No,0,12.5,Low environmental risk,50% landslide susceptibility + 50% modeled flood exposure
+Vengappally,Low,25,No,0,12.5,Low environmental risk,50% landslide susceptibility + 50% modeled flood exposure
